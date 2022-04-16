@@ -1,0 +1,15 @@
+^{
+  :watch-dirs ["src/cljs" "src/cljc"]
+  :open-url false
+  }
+{
+ :output-dir "target/public/js/app"
+ :asset-path "/js/app"
+ :modules {:auth {:entries #{alto-logica.auth.login}}
+           ;; :auth-validate {:entries #{alto-logica.auth.validate}}
+           :sign-up {:entries #{alto-logica.register.sign-up}}
+           :profile {:entries #{alto-logica.company.profile}}
+           :docs {:entries #{alto-logica.company.docs}}
+           ;; :util {:entries #{alto-logica.common.util}}
+           }
+ }
