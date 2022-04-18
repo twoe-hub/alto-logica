@@ -26,11 +26,10 @@
 
 (def template-map {:title "Profile | alto-logica"
                    :css ["/css/tachyons.min.css"
-                         "/css/base.css"
-                         "/css/profile.css"
-                         "https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/fontawesome.min.css"]
+                         "/css/base.css"]
                    :js ["/js/app/cljs_base.js"
-                        "/js/app/alto_logica/company/profile.js"]
+                        "/js/app/alto_logica/company/profile.js"
+                        "https://kit.fontawesome.com/a96c73f6bb.js"]
                    :csrf anti-forgery-field
                    :right-nav right-nav
                    :sub-nav sub-nav

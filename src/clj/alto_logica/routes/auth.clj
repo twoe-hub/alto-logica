@@ -23,8 +23,7 @@
 
 (def template-map {:title "Login | alto-logica"
                    :css ["/css/tachyons.min.css"
-                         "/css/base.css"
-                         "/css/login.css"]
+                         "/css/base.css"]
                    :js ["/js/app/cljs_base.js"
                         "/js/app/alto_logica/auth/login.js"]
                    :csrf anti-forgery-field
