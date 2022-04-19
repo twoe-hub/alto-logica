@@ -46,6 +46,7 @@
    (get-docs-by-email ((request :session) :identity))))
 
 (defn update-doc! [request]
+  (Thread/sleep 5000)
   (let [params (request :params)
         prop (first (keys params))
         {:keys [filename size tempfile]} (prop params)]
