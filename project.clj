@@ -40,7 +40,8 @@
                  [reagent "0.10.0"]
                  [cljs-ajax "0.7.3"]
                  [luminus-transit "0.1.2"]
-                 [tick "0.4.24-alpha"]]
+                 [tick "0.4.24-alpha"]
+                 [io.minio/minio "8.3.8"]]
 
   :min-lein-version "2.7.1"
   :source-paths ["src/clj" "src/cljc"]

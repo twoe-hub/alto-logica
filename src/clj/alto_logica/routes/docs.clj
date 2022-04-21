@@ -1,6 +1,7 @@
 (ns alto-logica.routes.docs
   (:require
    [clojure.pprint :refer [pprint]]
+   [clojure.string :refer [split]]
    [clojure.java.io :as io]
    [java-time :refer [local-date]]
    [ring.util.response :refer [redirect]]
@@ -14,8 +15,8 @@
    [alto-logica.company.validate :refer [validate]]
    [alto-logica.db.core :refer [query queries]]
    [alto-logica.middleware :as middleware]
-   [alto-logica.html.template :refer [template]])
-  (:import [java.io File]))
+   [alto-logica.html.template :refer [template]]
+   [alto-logica.util.minio-client :refer [get-doc-is put-doc delete-doc]]))
 
 (def right-nav [:div {:class "dtc v-mid tr pa3"}
                 [:a {:class "f6 fw4 grow no-underline white-90 dib ml2 pv2 ph3 ba", :href "/logout"} "Logout"]])
@@ -32,12 +33,11 @@
                    :js ["/js/app/cljs_base.js"
                         "/js/app/alto_logica/company/docs.js"
                         "https://kit.fontawesome.com/a96c73f6bb.js"]
-                   ;; :csrf anti-forgery-field
                    :right-nav right-nav
                    :sub-nav sub-nav
                    :main [:main#content {:class "pv1 black-80"}]})
 
-(defn get-docs-by-email [email]
+(defn- get-docs-by-email [email]
   {:docs (cske/transform-keys csk/->kebab-case-keyword
                               (query :get-docs email))})
 
@@ -46,15 +46,12 @@
    (get-docs-by-email ((request :session) :identity))))
 
 (defn update-doc! [request]
-  (Thread/sleep 5000)
   (let [params (request :params)
         prop (first (keys params))
-        {:keys [filename size tempfile]} (prop params)]
-    (with-open [in (io/input-stream tempfile)
-                out (io/output-stream (java.net.URLDecoder/decode
-                                       (str "/tmp" File/separator filename)
-                                       "utf-8"))]
-      (io/copy in out)))
+        {:keys [filename content-type size tempfile]} (prop params)
+        uri (str (name prop) "." (last (split filename #"\.")))
+        is (io/input-stream tempfile)]
+    (put-doc uri is size))
   (response/ok
    (get-docs-by-email ((request :session) :identity))))
 
