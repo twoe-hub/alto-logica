@@ -37,6 +37,9 @@
                    :sub-nav sub-nav
                    :main [:main#content {:class "pv1 black-80"}]})
 
+(defn- get-user [email]
+  (cske/transform-keys csk/->kebab-case-keyword (query :get-user email)))
+
 (defn- get-docs-by-email [email]
   {:docs (cske/transform-keys csk/->kebab-case-keyword
                               (query :get-docs email))})
@@ -45,12 +48,23 @@
   (response/ok
    (get-docs-by-email ((request :session) :identity))))
 
-(defn update-doc! [request]
-  (let [params (request :params)
+(defn create-doc! [m]
+  (query :create-doc! m))
+
+(defn update-doc! [m]
+  (query :update-doc! m))
+
+(defn upload-doc! [request]
+  (let [user (get-user ((request :session) :identity))
+        params (request :params)
         prop (first (keys params))
         {:keys [filename content-type size tempfile]} (prop params)
         uri (str (name prop) "." (last (split filename #"\.")))
         is (io/input-stream tempfile)]
+    (update-doc! {:company-id (user :id)
+                  :doc-type-id (csk/->SCREAMING_SNAKE_CASE (name prop))
+                  :filename filename
+                  :uri uri})
     (put-doc uri is size))
   (response/ok
    (get-docs-by-email ((request :session) :identity))))
@@ -66,4 +80,4 @@
    {:middleware [middleware/wrap-formats]}
    ["/docs" {:get docs-page}]
    ["/docs/list" {:get list-docs}]
-   ["/docs/update" {:post update-doc!}]])
+   ["/docs/upload" {:post upload-doc!}]])

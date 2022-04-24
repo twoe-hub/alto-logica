@@ -31,12 +31,12 @@
                     (reset! fields m)
                     (reset! docs m))}))
 
-(defn update-doc! [e]
+(defn upload-doc! [e]
   (let [el (or (.-srcElement e) (.-target e))
         name (.-name el)
         file (aget (.-files el) 0)
         form-data (doto (js/FormData.) (.append name file))]
-    (POST "/docs/update"
+    (POST "/docs/upload"
           {:body form-data
            :response-format :json
            :keywords? true
@@ -64,7 +64,7 @@
          [:input {:id id
                   :name id
                   :type "file"
-                  :on-change #(update-doc! %)
+                  :on-change #(upload-doc! %)
                   :aria-describedby error-id}]
          [:small {:id error-id, :class "pt2 f6 fw6 brick lh-copy db mb2"}
           ((keyword id) @errors)]])))])
